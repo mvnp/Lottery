@@ -17,7 +17,7 @@ function tratar(array $array)
 }
 
 /**
- * Função que gera as dezenas com a quantidade escolhida
+ * Função que gera as dezenas com a quantidade escolhida - retorna UM JOGO
  * @param [type] $num [description]
  * @return [type] [description]
  */
@@ -96,22 +96,28 @@ if($_SERVER['REQUEST_METHOD'] === 'POST')
 	$_SESSION['inc'] = ((isset($data['include'])) ? $data['include'] : []);
 	$_SESSION['exc'] = ((isset($data['exclude'])) ? $data['exclude'] : []);
 	$_SESSION['qty'] = ((isset($data['qty'])) ? (int)$data['qty'] : 15);
-	$_SESSION['times'] = ((isset($data['times'])) ? (int)$data['times'] : 1000);
+	$_SESSION['times'] = ((isset($data['times'])) ? (int)$data['times'] : 20);
 
 	$qty = ((isset($data['qty'])) ? (int)$data['qty'] : 15);
 	$possible_values = range(1, 25);
 	$always = ((isset($data['include'])) ? $data['include'] : []);
 	$excludes = ((isset($data['exclude'])) ? $data['exclude'] : []);
-	$times = ((isset($data['times'])) ? (int)$data['times'] : 100);
+	$times = ((isset($data['times'])) ? (int)$data['times'] : 20);
 
 	$lottery = [];
-	for ($i = 0; $i < $times; $i++) {
+	for ($i = 0; $i < $times; $i++) 
+	{
 		$grupo = "";
 		$lottery[] = random_unique_select($qty, $possible_values, $excludes, $always);
-		foreach ($lottery as $loterias => $numeros) {
-			if(count($numeros) === $qty) {
-				$grupo .= "<strong>" . str_pad($loterias, 3, 0, STR_PAD_LEFT) .'</strong> => '. implode(" - ", tratar($numeros)) . "<br>";
-			}
+	}
+
+	array_unique($lottery, SORT_REGULAR);
+
+	foreach ($lottery as $loterias => $numeros)
+	{
+		$numeros = array_slice($numeros, 0, $qty);
+		if(count($numeros) === $qty) {
+			$grupo .= "<strong>" . str_pad($loterias, 3, 0, STR_PAD_LEFT) .'</strong> => '. implode(" - ", tratar($numeros)) . "<br>";
 		}
 	}
 }

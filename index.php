@@ -20,7 +20,7 @@
 	</style>
 </head>
 <body>
-	<div class="container" style="clear: both;display: block">
+	<div class="container" style="clear: both;display: block;max-width: 100%">
 		<div class="row">
 			<div class="col-7">
 				<?php 
