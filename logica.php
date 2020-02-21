@@ -23,6 +23,11 @@ function tratar(array $array)
  */
 function random_unique_select($num, array $possible_values, $excludes, $always)
 {
+	// echo "<div style='float:left;width:25%'><pre>";
+	// 	print_r(array('excludes' => $excludes));
+	// 	print_r(array('excludes' => $always));
+	// echo "</pre></div>";
+
 	$sizeof = count($possible_values);
 
     if ($num > $sizeof) {
@@ -48,21 +53,34 @@ function random_unique_select($num, array $possible_values, $excludes, $always)
 	    $possible_values = array_values($possible_values);	        
     }
 
-    // Caso manter e excluir não tenham sido passados
+    // Caso manter e excluir não tenham sido passados !!..
     if(count($always) == 0 && count($excludes) == 0) {
-    	array_slice($selected, 0, $qty);
+    	array_slice($selected, 0, $num);
     	sort($selected);
     	return $selected;
     }
 
-	if(count($always) > 0)
-		$selected = array_slice(array_unique(array_merge($selected, $always)), 0, $qty);
+    // Caso manter foi passado e excluir é vazio !!..
+	if(count($always) > 0 && count($excludes) == 0) {
+		$selected = array_unique(array_merge($selected, $always));
+		sort($selected);
+		return $selected;
+	}
 
-    if(count($excludes) > 0)
-    	$selected = array_slice(array_diff($selected, $excludes), 0, $qty);
+    // Caso excluir foi passado e manter é vazio !!..
+    if(count($always) == 0 && count($excludes) > 0) {
+    	$selected = array_slice(array_diff($selected, $excludes), 0, $num);
+	    sort($selected);
+	    return $selected;
+    }
 
-    sort($selected);
-    return $selected;
+    // Caso excluir foi passado e manter é vazio !!..
+    if(count($always) > 0 && count($excludes) > 0) {
+    	$selected = array_unique(array_merge($selected, $always));
+    	$selected = array_diff($selected, $excludes);
+	    sort($selected);
+	    return $selected;
+    }
 }
 
 /**
@@ -75,26 +93,25 @@ function random_unique_select($num, array $possible_values, $excludes, $always)
 if($_SERVER['REQUEST_METHOD'] === 'POST')
 {
 	$data = $_POST;
-	$_SESSION['inc'] = $data['include'];
-	$_SESSION['exc'] = $data['exclude'];
-	$_SESSION['qty'] = $data['qty'];
+	$_SESSION['inc'] = ((isset($data['include'])) ? $data['include'] : []);
+	$_SESSION['exc'] = ((isset($data['exclude'])) ? $data['exclude'] : []);
+	$_SESSION['qty'] = ((isset($data['qty'])) ? (int)$data['qty'] : 15);
+	$_SESSION['times'] = ((isset($data['times'])) ? (int)$data['times'] : 1000);
 
-	$qty = (int)$data['qty'];
+	$qty = ((isset($data['qty'])) ? (int)$data['qty'] : 15);
 	$possible_values = range(1, 25);
-	$always = $data['include'];
-	$excludes = $data['exclude'];
-	$times = 250;
+	$always = ((isset($data['include'])) ? $data['include'] : []);
+	$excludes = ((isset($data['exclude'])) ? $data['exclude'] : []);
+	$times = ((isset($data['times'])) ? (int)$data['times'] : 100);
 
 	$lottery = [];
-	$ra = 0;
 	for ($i = 0; $i < $times; $i++) {
 		$grupo = "";
 		$lottery[] = random_unique_select($qty, $possible_values, $excludes, $always);
 		foreach ($lottery as $loterias => $numeros) {
 			if(count($numeros) === $qty) {
-				$ra++;
 				$grupo .= "<strong>" . str_pad($loterias, 3, 0, STR_PAD_LEFT) .'</strong> => '. implode(" - ", tratar($numeros)) . "<br>";
 			}
 		}
-	}		
+	}
 }
