@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Lottery</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
 	<style>
 		input[type=submit] { margin-bottom: 25px }
@@ -35,7 +35,7 @@
 						<div class="col-12">
 							<h5>Número de Jogos .. <span class="recado">Não funciona se tiver combinações de MANTER e REMOVER</span></h5>
 							<table id="table" class="table"><tr><td></td></tr></table>
-							<input name="times" id="" class="form-control" value="100" style="margin-bottom:20px" />
+							<input name="times" id="" class="form-control" value="<?php echo ((isset($_SESSION['times'])) ? $_SESSION['times'] : 100) ?>" style="margin-bottom:20px" />
 							<h5>Número de Dezenas ..</h5>
 							<table id="table" class="table"><tr><td></td></tr></table>
 							<select name="qty" id="" class="form-control" style="margin-bottom:20px">
@@ -48,7 +48,7 @@
 								<option <?php echo ((isset($_SESSION['qty']) && $_SESSION['qty'] == 17) ? "selected='selected'": "") ?> value="17">17</option>
 								<option <?php echo ((isset($_SESSION['qty']) && $_SESSION['qty'] == 18) ? "selected='selected'": "") ?> value="18">18</option>
 							</select>
-							<h5>Manter ..</h5>
+							<h5>Manter .. <span class="recado"><?php echo ((isset($_SESSION['inc'])) ? count($_SESSION['inc']) . " números estão marcados." : ""); ?></span></h5>
 							<table class="table">
 								<tr>
 									<td><input name="include[]" type="checkbox" value="1" <?php  echo (( isset($_SESSION['inc']) && is_array($_SESSION['inc']) && in_array(1, $_SESSION['inc']) ) ? "checked": "") ?>>01</td>
@@ -84,7 +84,7 @@
 					</div>
 					<div class="row">
 						<div class="col-12">
-							<h5>Remover ...</h5>
+							<h5>Remover ...<span class="recado"><?php echo ((isset($_SESSION['exc'])) ? count($_SESSION['exc']) . " números estão marcados." : ""); ?></span></h5>
 							<table class="table">
 								<tr>
 									<td><input name="exclude[]" type="checkbox" value="1" <?php echo  (( isset($_SESSION['exc']) && is_array($_SESSION['exc']) && in_array(1, $_SESSION['exc']) ) ? "checked": "") ?>>01</td>
